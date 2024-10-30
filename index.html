@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption/Decryption</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+        }
+        input, textarea, button, select {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .steps, .description {
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .step, .desc-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enkripsi</h2>
+        <select id="algorithm">
+            <option value="AES">AES</option>
+            <option value="DES">DES</option>
+        </select>
+        <textarea id="plain_text" placeholder="Masukkan teks untuk dienkripsi"></textarea>
+        <button onclick="encryptText()">Enkripsi</button>
+        <textarea id="encrypted_text" placeholder="Hasil enkripsi akan muncul di sini" readonly></textarea>
+
+        <h2>Dekripsi</h2>
+        <select id="algorithm_decrypt">
+            <option value="AES">AES</option>
+            <option value="DES">DES</option>
+        </select>
+        <textarea id="cipher_text" placeholder="Masukkan teks untuk didekripsi"></textarea>
+        <button onclick="decryptText()">Dekripsi</button>
+        <textarea id="decrypted_text" placeholder="Hasil dekripsi akan muncul di sini" readonly></textarea>
+
+        <div class="steps">
+            <h3>Cara Kerja Enkripsi</h3>
+            <div class="step">1. Pilih algoritma enkripsi yang diinginkan (AES atau DES).</div>
+            <div class="step">2. Masukkan teks yang ingin dienkripsi.</div>
+            <div class="step">3. Tekan tombol "Enkripsi".</div>
+            <div class="step">4. Hasil enkripsi akan muncul di kotak hasil.</div>
+            <div class="step">5. Untuk dekripsi, pilih algoritma yang sama dan masukkan hasil enkripsi.</div>
+            <div class="step">6. Tekan tombol "Dekripsi". Hasil dekripsi akan muncul di kotak hasil.</div>
+        </div>
+
+        <div class="description">
+            <h3>Deskripsi Algoritma</h3>
+            <div class="desc-item"><b>AES (Advanced Encryption Standard):</b> Algoritma enkripsi simetris yang menggunakan blok 128-bit. Dikenal karena keamanannya yang tinggi dan banyak digunakan dalam berbagai aplikasi keamanan data.</div>
+            <div class="desc-item"><b>DES (Data Encryption Standard):</b> Algoritma enkripsi simetris yang lebih tua dengan panjang kunci 64-bit. DES dianggap kurang aman saat ini, tapi masih digunakan untuk beberapa aplikasi.</div>
+        </div>
+    </div>
+
+    <script>
+        const aesKey = CryptoJS.enc.Utf8.parse("12345678901234567890123456789012"); // 32 chars key for AES
+        const desKey = CryptoJS.enc.Utf8.parse("12345678"); // 8 chars key for DES
+
+        function encryptText() {
+            const plainText = document.getElementById('plain_text').value;
+            const algorithm = document.getElementById('algorithm').value;
+            let encryptedText;
+
+            if (algorithm === 'AES') {
+                encryptedText = CryptoJS.AES.encrypt(plainText, aesKey, { mode: CryptoJS.mode.ECB }).toString();
+            } else if (algorithm === 'DES') {
+                encryptedText = CryptoJS.DES.encrypt(plainText, desKey, { mode: CryptoJS.mode.ECB }).toString();
+            }
+
+            document.getElementById('encrypted_text').value = encryptedText;
+        }
+
+        function decryptText() {
+            const cipherText = document.getElementById('cipher_text').value;
+            const algorithm = document.getElementById('algorithm_decrypt').value;
+            let decryptedText;
+
+            if (algorithm === 'AES') {
+                decryptedText = CryptoJS.AES.decrypt(cipherText, aesKey, { mode: CryptoJS.mode.ECB }).toString(CryptoJS.enc.Utf8);
+            } else if (algorithm === 'DES') {
+                decryptedText = CryptoJS.DES.decrypt(cipherText, desKey, { mode: CryptoJS.mode.ECB }).toString(CryptoJS.enc.Utf8);
+            }
+
+            document.getElementById('decrypted_text').value = decryptedText;
+        }
+    </script>
+</body>
+</html>
