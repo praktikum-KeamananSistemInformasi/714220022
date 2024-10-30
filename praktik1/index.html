@@ -25,9 +25,12 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 500px; /* Set a max-width to make it look good on larger screens */
+            overflow: auto; /* Enable scrolling for overflowing content */
         }
         h2 {
             text-align: center;
+            font-size: 1.5em; /* Adjust font size */
+            margin: 10px 0; /* Add some margin */
         }
         input, textarea, button, select {
             width: 100%;
@@ -41,6 +44,7 @@
             background-color: #007bff;
             color: white;
             cursor: pointer;
+            margin-top: 20px; /* Add margin on top of button for spacing */
         }
         button:hover {
             background-color: #0056b3;
@@ -50,6 +54,7 @@
             background-color: #e9ecef;
             padding: 15px;
             border-radius: 8px;
+            overflow: auto; /* Enable scrolling for overflowing content */
         }
         .step, .desc-item {
             margin-bottom: 10px;
@@ -59,7 +64,7 @@
                 padding: 15px; /* Reduce padding on smaller screens */
             }
             h2 {
-                font-size: 1.5em; /* Adjust font size */
+                font-size: 1.3em; /* Adjust font size */
             }
             input, textarea, button, select {
                 font-size: 0.9em; /* Adjust font size for inputs */
@@ -74,18 +79,18 @@
             <option value="AES">AES</option>
             <option value="DES">DES</option>
         </select>
-        <textarea id="plain_text" placeholder="Masukkan teks untuk dienkripsi"></textarea>
+        <textarea id="plain_text" placeholder="Masukkan teks untuk dienkripsi" rows="4"></textarea>
         <button onclick="encryptText()">Enkripsi</button>
-        <textarea id="encrypted_text" placeholder="Hasil enkripsi akan muncul di sini" readonly></textarea>
+        <textarea id="encrypted_text" placeholder="Hasil enkripsi akan muncul di sini" readonly rows="4"></textarea>
 
         <h2>Dekripsi</h2>
         <select id="algorithm_decrypt">
             <option value="AES">AES</option>
             <option value="DES">DES</option>
         </select>
-        <textarea id="cipher_text" placeholder="Masukkan teks untuk didekripsi"></textarea>
+        <textarea id="cipher_text" placeholder="Masukkan teks untuk didekripsi" rows="4"></textarea>
         <button onclick="decryptText()">Dekripsi</button>
-        <textarea id="decrypted_text" placeholder="Hasil dekripsi akan muncul di sini" readonly></textarea>
+        <textarea id="decrypted_text" placeholder="Hasil dekripsi akan muncul di sini" readonly rows="4"></textarea>
 
         <div class="steps">
             <h3>Cara Kerja Enkripsi</h3>
