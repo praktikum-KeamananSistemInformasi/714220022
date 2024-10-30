@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilaian Risiko Sistem Informasi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #outputSection {
+            display: none;
+            margin-top: 20px;
+        }
+        #chartContainer {
+            width: 100%;
+            height: 400px;
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Penilaian Risiko Sistem Informasi</h1>
+
+<form id="riskForm">
+    <label for="aset">Aset</label>
+    <select id="aset" onchange="updateThreatOptions()">
+        <option value="Server">Server</option>
+        <option value="Database">Database</option>
+        <option value="Data Pengguna">Data Pengguna</option>
+        <option value="API Eksternal">API Eksternal</option>
+    </select>
+
+    <label for="ancaman">Ancaman</label>
+    <select id="ancaman">
+        <!-- Ancaman akan di-update berdasarkan aset -->
+    </select>
+
+    <label for="damage">Damage Potential</label>
+    <input type="number" id="damage" placeholder="Skala 1-10" min="1" max="10">
+
+    <label for="reproducibility">Reproducibility</label>
+    <input type="number" id="reproducibility" placeholder="Skala 1-10" min="1" max="10">
+
+    <label for="exploitability">Exploitability</label>
+    <input type="number" id="exploitability" placeholder="Skala 1-10" min="1" max="10">
+
+    <label for="affectedUsers">Affected Users</label>
+    <input type="number" id="affectedUsers" placeholder="Skala 1-10" min="1" max="10">
+
+    <label for="discoverability">Discoverability</label>
+    <input type="number" id="discoverability" placeholder="Skala 1-10" min="1" max="10">
+
+    <button type="button" onclick="calculateRisk()">Hitung Skor Risiko</button>
+</form>
+
+<div id="outputSection">
+    <h3>Grafik Skor Risiko DREAD</h3>
+    <canvas id="chartContainer"></canvas> <!-- Mengubah div menjadi canvas -->
+    
+    <h3>Mitigasi Risiko</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Aset</th>
+                <th>Ancaman</th>
+                <th>Skor Risiko</th>
+                <th>Penjelasan</th>
+                <th>Mitigasi</th>
+            </tr>
+        </thead>
+        <tbody id="outputTable">
+            <!-- Hasil mitigasi akan ditampilkan di sini -->
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const threats = {
+        "Server": ["Tampering", "DoS"],
+        "Database": ["Information Disclosure", "Elevation of Privilege"],
+        "Data Pengguna": ["Information Disclosure", "Spoofing"],
+        "API Eksternal": ["Tampering", "Repudiation"]
+    };
+
+    function updateThreatOptions() {
+        const aset = document.getElementById('aset').value;
+        const ancamanSelect = document.getElementById('ancaman');
+        ancamanSelect.innerHTML = '';
+
+        threats[aset].forEach(threat => {
+            const option = document.createElement('option');
+            option.value = threat;
+            option.textContent = threat;
+            ancamanSelect.appendChild(option);
+        });
+    }
+
+    function calculateRisk() {
+        const aset = document.getElementById('aset').value;
+        const ancaman = document.getElementById('ancaman').value;
+        const damage = parseInt(document.getElementById('damage').value) || 0;
+        const reproducibility = parseInt(document.getElementById('reproducibility').value) || 0;
+        const exploitability = parseInt(document.getElementById('exploitability').value) || 0;
+        const affectedUsers = parseInt(document.getElementById('affectedUsers').value) || 0;
+        const discoverability = parseInt(document.getElementById('discoverability').value) || 0;
+
+        const riskScore = damage + reproducibility + exploitability + affectedUsers + discoverability;
+
+        let mitigasi, penjelasan;
+        switch(aset) {
+            case "Server":
+                penjelasan = ancaman === "Tampering" ? "Modifikasi konfigurasi server tanpa otorisasi." : "Serangan menyebabkan server tidak responsif.";
+                mitigasi = ancaman === "Tampering" ? "Perkuat keamanan server dengan firewall dan sistem deteksi intrusi." : "Gunakan alat anti-DDoS dan pemantauan lalu lintas jaringan.";
+                break;
+            case "Database":
+                penjelasan = ancaman === "Information Disclosure" ? "Kebocoran data sensitif pengguna." : "Akses ilegal ke data atau operasi administratif.";
+                mitigasi = ancaman === "Information Disclosure" ? "Terapkan enkripsi data dan kontrol akses ketat." : "Gunakan autentikasi multi-faktor dan pemantauan akses.";
+                break;
+            case "Data Pengguna":
+                penjelasan = ancaman === "Information Disclosure" ? "Kebocoran informasi pribadi pengguna." : "Pencurian identitas atau akses tidak sah.";
+                mitigasi = ancaman === "Information Disclosure" ? "Gunakan enkripsi data dan pembatasan akses." : "Gunakan autentikasi dua faktor dan verifikasi identitas.";
+                break;
+            case "API Eksternal":
+                penjelasan = ancaman === "Tampering" ? "Modifikasi data antara perusahaan dan API eksternal." : "Sulit melacak perubahan data tanpa pencatatan lengkap.";
+                mitigasi = ancaman === "Tampering" ? "Validasi data dan enkripsi komunikasi." : "Terapkan logging dan pencatatan yang lengkap.";
+                break;
+        }
+
+        // Update tabel mitigasi
+        document.getElementById('outputTable').innerHTML = `
+            <tr>
+                <td>${aset}</td>
+                <td>${ancaman}</td>
+                <td>${riskScore}</td>
+                <td>${penjelasan}</td>
+                <td>${mitigasi}</td>
+            </tr>
+        `;
+
+        // Menampilkan grafik
+        const labels = ['Damage', 'Reproducibility', 'Exploitability', 'Affected Users', 'Discoverability'];
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Skor Risiko',
+                data: [damage, reproducibility, exploitability, affectedUsers, discoverability],
+                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Skor'
+                        }
+                    }
+                }
+            }
+        };
+
+        // Render chart
+        const ctx = document.getElementById('chartContainer').getContext('2d'); // Dapatkan konteks dari canvas
+        if (window.myChart) {
+            window.myChart.destroy(); // Hancurkan chart sebelumnya jika ada
+        }
+        window.myChart = new Chart(ctx, config); // Buat chart baru
+        document.getElementById('outputSection').style.display = 'block'; // Tampilkan output section
+    }
+</script>
+
+</body>
+</html>
